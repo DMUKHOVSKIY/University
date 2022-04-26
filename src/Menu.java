@@ -202,9 +202,10 @@ public class Menu {
     private void workWithGroup(int i, Group group, Student student) {
         switch (i) {
             case 1: {
-                System.out.println("Enter the name of the Group");
+                System.out.println("Enter the number of the Group");
+                int number = enterTheNumber();
                 System.out.println("Enter the type of sorting (Ascending or Descending):\n");
-                System.out.println(getGroup(enterTheNumber()).sortStudentsByMarks(enterTheString()));
+                System.out.println(getGroup(number).sortStudentsByMarks(enterTheString()));
             }
             break;
             case 2:

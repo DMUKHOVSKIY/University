@@ -1,4 +1,6 @@
-public class Marks {
+import java.io.Serializable;
+
+public class Marks implements Serializable {
     private String lesson;
     private int mark;
 

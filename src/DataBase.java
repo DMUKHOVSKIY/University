@@ -3,11 +3,9 @@ import java.util.ArrayList;
 
 public class DataBase {
     private ObjectOutputStream oos;
-    private ObjectInputStream ois;
 
     public DataBase(String file) throws IOException {
         oos = new ObjectOutputStream(new FileOutputStream(file, false));
-        ois = new ObjectInputStream(new FileInputStream(file));
     }
 
     public void addData(Object obj) {
@@ -20,10 +18,10 @@ public class DataBase {
         }
     }
 
-    public <T> ArrayList<T> readData() {
+    public <T> ArrayList<T> readData(String file) {
         ArrayList<T> list = new ArrayList<>();
         Object obj;
-        try {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));) {
             while (true) {
                 list.add((T) ois.readObject());
             }
@@ -40,19 +38,11 @@ public class DataBase {
         return list;
     }
 
-    public void oisClose() {
-        try {
-            ois.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-/*
     public void oosClose() {
         try {
             oos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 }

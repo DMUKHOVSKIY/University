@@ -2,6 +2,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/*
+1)Создаём студентов и прописываем их оценки (отедельно делать нельзя)
+2)Создаем группу и добавляем туда студентов (отдельно делать нельзя)
+3)Создаем университет и добавляем туда группы (отдкльно делать нельзя)
+4)После каждого пререзапуска программы файлы перезаписываются
+*/
+
 public class Menu {
     boolean doWork = true;
     private Student student;
@@ -10,12 +17,15 @@ public class Menu {
     private DataBase dataBaseUniversity;
     private DataBase dataBaseGroup;
     private DataBase dataBaseStudent;
+    private ArrayList<Student> students;
+    private ArrayList<Group> groups;
+    private ArrayList<University> universities;
 
     {
         try {
-            dataBaseUniversity = new DataBase("University.dat");
-            dataBaseGroup = new DataBase("Group.dat");
-            dataBaseStudent = new DataBase("Student.dat");
+            dataBaseUniversity = new DataBase("University.txt");
+            dataBaseGroup = new DataBase("Group.txt");
+            dataBaseStudent = new DataBase("Student.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -24,16 +34,17 @@ public class Menu {
     public void start() {
         while (true) {
             doWork = true;
-            System.out.println("Hello, what do you want to do?\n" +
-                    "choose 1 to create the Student\n" +
-                    "choose 2 to create the Group\n" +
-                    "choose 3 to create the University\n" +
+            System.out.println("___________________________________\n" +
+                    "Hello, what do you want to do?\n" +
+                    "___________________________________\n" +
+                    "choose 1 to work with a Student\n" +
+                    "choose 2 to work with a Group\n" +
+                    "choose 3 to work with a University\n" +
+                    "___________________________________\n" +
                     "choose 4 to get Student from the DataBase\n" +
                     "choose 5 to get Group from the DataBase\n" +
                     "choose 6 to get University from the DataBase\n" +
-                    "choose 7 to get Students from the Group\n" +
-                    "choose 8 to get all information about the University\n" +
-                    "choose 9 to exit");
+                    "choose 7 to exit");
 
             Action(enterTheNumber());
         }
@@ -44,14 +55,12 @@ public class Menu {
             case 1: {
                 System.out.println("You want to create new Student? (Yes,No)");
                 if (enterTheString().equals("Yes")) {
-                    student = addStudent();
-                    dataBaseStudent.addData(student);
+                    createNewStudent();
                 } else {
                     while (doWork) {
-                        System.out.println("Choose 1 to add the Marks to the Student\n" +
-                                "Choose 2 to get average mark of a Student\n" +
-                                "Choose 3 to exit");
-                        workWithStudent(enterTheNumber(), student);
+                        System.out.println("Choose 1 to get average mark of a Student\n" +
+                                "Choose 2 to exit");
+                        workWithStudent(enterTheNumber());
                     }
                 }
             }
@@ -59,28 +68,24 @@ public class Menu {
             case 2: {
                 System.out.println("You want to create new Group? (Yes,No)");
                 if (enterTheString().equals("Yes")) {
-                    group = addGroup();
-                    dataBaseGroup.addData(group);
+                    createNewGroup();
                 } else {
                     while (doWork) {
-                        System.out.println("Choose 1 to add the student to the Group\n" +
-                                "Choose 2 to sort Students in the Group by average mark\n" +
-                                "Choose 3 to exit");
+                        System.out.println("Choose 1 to sort Students in the Group by average mark\n" +
+                                "Choose 2 to exit");
                         workWithGroup(enterTheNumber(), group, student);
                     }
                 }
             }
             break;
             case 3: {
-                System.out.println("You want to create new Group? (Yes,No)");
+                System.out.println("You want to create new University? (Yes,No)");
                 if (enterTheString().equals("Yes")) {
-                    university = addUniversity();
-                    dataBaseUniversity.addData(university);
+                    createNewUniversity();
                 } else {
                     while (doWork) {
-                        System.out.println("Choose 1 to add the Group to the University\n" +
-                                "Choose 2 to sort Groups int the University by average marks\n" +
-                                "Choose 3 to exit");
+                        System.out.println("Choose 1 to sort Groups int the University by average marks\n" +
+                                "Choose 2 to exit");
                         workWithUniversity(enterTheNumber(), university, group);
                     }
                 }
@@ -93,7 +98,7 @@ public class Menu {
             break;
             case 5: {
                 System.out.println("Enter the number of the Group");
-                System.out.println(getGroup(enterTheNumber()));
+                System.out.println(getGroup(enterTheNumber()).toString());
             }
             break;
             case 6: {
@@ -102,22 +107,33 @@ public class Menu {
             }
             break;
             case 7: {
-                System.out.println("Enter the number of the Group");
-                getStudentOfGroup(enterTheNumber());
-            }
-            break;
-            case 8: {
-                System.out.println("Enter the name of the University");
-                getAllUniversityInformation(enterTheString());
-            }
-            break;
-            case 9: {
                 System.out.println("Conclusion...");
+                dataBaseStudent.oosClose();
+                dataBaseGroup.oosClose();
+                dataBaseUniversity.oosClose();
                 return;
             }
             default:
                 defaultBlock();
         }
+    }
+
+    private void createNewStudent() {
+        student = addStudent();
+        studentAddMark();
+        dataBaseStudent.addData(student);
+    }
+
+    private void createNewGroup() {
+        group = addGroup();
+        groupAddStudent();
+        dataBaseGroup.addData(group);
+    }
+
+    private void createNewUniversity() {
+        university = addUniversity();
+        universityAddGroup();
+        dataBaseUniversity.addData(university);
     }
 
     private University addUniversity() {
@@ -135,23 +151,48 @@ public class Menu {
         return new Student(enterTheString(), enterTheString());
     }
 
-    private void workWithStudent(int i, Student student) {
+    private void studentAddMark() {
+        String choice = "Yes";
+        while (choice.equals("Yes")) {
+            System.out.println("Enter the subject: ");
+            String subject = enterTheString();
+            System.out.println("Enter the mark: ");
+            int mark = enterTheNumber();
+            student.addMark(new Marks(subject, mark));
+            System.out.println("You want to add another mark? (Yes,No)");
+            choice = enterTheString();
+        }
+    }
+
+    private void groupAddStudent() {
+        String choice = "Yes";
+        while (choice.equals("Yes")) {
+            System.out.println("Enter the name of the Student to add");
+            Student st = getStudent(enterTheString(), enterTheString());
+            group.addStudent(st);
+            System.out.println("You want to add another Student? (Yes,No)");
+            choice = enterTheString();
+        }
+    }
+
+    private void universityAddGroup() {
+        String choice = "Yes";
+        while (choice.equals("Yes")) {
+            System.out.println("Enter the name of the Group to add");
+            university.addGroup(getGroup(enterTheNumber()));
+            System.out.println("You want to add another Group? (Yes,No)");
+            choice = enterTheString();
+        }
+    }
+
+    private void workWithStudent(int i) {
         switch (i) {
-            case 1: {
-                System.out.println("Enter the subject: ");
-                String subject = enterTheString();
-                System.out.println("Enter the mark: ");
-                int mark = enterTheNumber();
-
-                student.addMark(new Marks(subject, mark));
-            }
-            break;
-            case 2:
-                System.out.println(student.getAverageMarkOfStudent());
+            case 1:
+                System.out.println("Enter the name of the Student");
+                System.out.println(getStudent(enterTheString(), enterTheString()).getAverageMarkOfStudent());
                 break;
-            case 3:
+            case 2:
                 doWork = false;
-
                 break;
             default:
                 defaultBlock();
@@ -160,15 +201,13 @@ public class Menu {
 
     private void workWithGroup(int i, Group group, Student student) {
         switch (i) {
-            case 1:
-                group.addStudent(student);
-                break;
-            case 2: {
+            case 1: {
+                System.out.println("Enter the name of the Group");
                 System.out.println("Enter the type of sorting (Ascending or Descending):\n");
-                System.out.println(group.sortStudentsByMarks(enterTheString()));
+                System.out.println(getGroup(enterTheNumber()).sortStudentsByMarks(enterTheString()));
             }
             break;
-            case 3:
+            case 2:
                 doWork = false;
                 break;
             default:
@@ -178,15 +217,14 @@ public class Menu {
 
     private void workWithUniversity(int i, University university, Group group) {
         switch (i) {
-            case 1:
-                university.addGroup(group);
-                break;
-            case 2: {
+            case 1: {
+                System.out.println("Enter the name of the University");
+                String name = enterTheString();
                 System.out.println("Enter the type of sorting (Ascending or Descending:\n)");
-                System.out.println(university.sortGroupsByMarks(enterTheString()));
+                System.out.println(getUniversity(name).sortGroupsByMarks(enterTheString()));
             }
             break;
-            case 3:
+            case 2:
                 doWork = false;
                 break;
             default:
@@ -195,51 +233,36 @@ public class Menu {
     }
 
     private Student getStudent(String name, String surname) {
-        ArrayList<Student> list = dataBaseStudent.readData();
+        students = dataBaseStudent.readData("Student.txt");
 
-        for (Student student : list) {
+        for (Student student : students) {
             if (student.getName().equals(name) && student.getSurname().equals(surname))
                 return student;
-            else
-                System.out.println("Can't find the student");
         }
+        System.out.println("Can't find the student");
         return null;
     }
 
     private Group getGroup(int groupNumber) {
-        ArrayList<Group> list = dataBaseGroup.readData();
+        groups = dataBaseGroup.readData("Group.txt");
 
-        for (Group group : list) {
+        for (Group group : groups) {
             if (group.getGroupNumber() == groupNumber)
                 return group;
-            else
-                System.out.println("Can't find the group");
         }
-
+        System.out.println("Can't find the group");
         return null;
     }
-
-    private void getStudentOfGroup(int numberOfGroup) {
-        Group groupTmp = getGroup(numberOfGroup);
-        System.out.println(groupTmp.getListOfStudents());
-    }
-
 
     private University getUniversity(String nameOfUniversity) {
-        ArrayList<University> list = dataBaseUniversity.readData();
+        universities = dataBaseUniversity.readData("University.txt");
 
-        for (University university : list) {
+        for (University university : universities) {
             if (university.getNameOfUniversity().equals(nameOfUniversity))
                 return university;
-            else
-                System.out.println("Can't find the student");
         }
+        System.out.println("Can't find the university");
         return null;
-    }
-
-    private void getAllUniversityInformation(String nameOfUniversity) {
-        University universityTmp = getUniversity(nameOfUniversity);
-        System.out.println(universityTmp.toString());
     }
 
     private String enterTheString() {

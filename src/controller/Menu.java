@@ -1,3 +1,11 @@
+package controller;
+
+import entity.Group;
+import entity.Marks;
+import entity.Student;
+import entity.University;
+import repository.DataBase;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -5,7 +13,7 @@ import java.util.Scanner;
 /*
 1)Создаём студентов и прописываем их оценки (отедельно делать нельзя)
 2)Создаем группу и добавляем туда студентов (отдельно делать нельзя)
-3)Создаем университет и добавляем туда группы (отдкльно делать нельзя)
+3)Создаем университет и добавляем туда группы (отдельно делать нельзя)
 4)После каждого пререзапуска программы файлы перезаписываются
 */
 
@@ -23,9 +31,9 @@ public class Menu {
 
     {
         try {
-            dataBaseUniversity = new DataBase("University.txt");
-            dataBaseGroup = new DataBase("Group.txt");
-            dataBaseStudent = new DataBase("Student.txt");
+            dataBaseUniversity = new DataBase("entity.University.txt");
+            dataBaseGroup = new DataBase("entity.Group.txt");
+            dataBaseStudent = new DataBase("entity.Student.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,9 +49,9 @@ public class Menu {
                     "choose 2 to work with a Group\n" +
                     "choose 3 to work with a University\n" +
                     "___________________________________\n" +
-                    "choose 4 to get Student from the DataBase\n" +
-                    "choose 5 to get Group from the DataBase\n" +
-                    "choose 6 to get University from the DataBase\n" +
+                    "choose 4 to get entity.Student from the DataBase\n" +
+                    "choose 5 to get entity.Group from the DataBase\n" +
+                    "choose 6 to get entity.University from the DataBase\n" +
                     "choose 7 to exit");
 
             Action(enterTheNumber());
@@ -188,7 +196,7 @@ public class Menu {
     private void workWithStudent(int i) {
         switch (i) {
             case 1:
-                System.out.println("Enter the name of the Student");
+                System.out.println("Enter the name of the entity.Student");
                 System.out.println(getStudent(enterTheString(), enterTheString()).getAverageMarkOfStudent());
                 break;
             case 2:
@@ -234,7 +242,7 @@ public class Menu {
     }
 
     private Student getStudent(String name, String surname) {
-        students = dataBaseStudent.readData("Student.txt");
+        students = dataBaseStudent.readData("entity.Student.txt");
 
         for (Student student : students) {
             if (student.getName().equals(name) && student.getSurname().equals(surname))
@@ -245,7 +253,7 @@ public class Menu {
     }
 
     private Group getGroup(int groupNumber) {
-        groups = dataBaseGroup.readData("Group.txt");
+        groups = dataBaseGroup.readData("entity.Group.txt");
 
         for (Group group : groups) {
             if (group.getGroupNumber() == groupNumber)
@@ -256,7 +264,7 @@ public class Menu {
     }
 
     private University getUniversity(String nameOfUniversity) {
-        universities = dataBaseUniversity.readData("University.txt");
+        universities = dataBaseUniversity.readData("entity.University.txt");
 
         for (University university : universities) {
             if (university.getNameOfUniversity().equals(nameOfUniversity))

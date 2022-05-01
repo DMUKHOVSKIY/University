@@ -1,6 +1,7 @@
+package entity;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Group implements Serializable {
@@ -53,7 +54,7 @@ public class Group implements Serializable {
 
     @Override
     public String toString() {
-        return "\nGroup:" + groupNumber + listOfStudents;
+        return "\nentity.Group:" + groupNumber + listOfStudents;
     }
 
 }

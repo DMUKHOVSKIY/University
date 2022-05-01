@@ -1,3 +1,5 @@
+package entity;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +47,7 @@ public class University implements Serializable {
 
     @Override
     public String toString() {
-        return "\nUniversity:\n" + nameOfUniversity + listOfGroup;
+        return "\nentity.University:\n" + nameOfUniversity + listOfGroup;
     }
 
 }
